@@ -190,7 +190,8 @@
                     <!-- </div>- Good morning Container | Sara's section -->
 
                     <div class="container-fluid  goodmorningcontainer mt-3">
-                        <h4 class="mt-5" id="song">Good morning</h4>
+
+                        <h4 class="mt-5" id="song" onClick="getArtist('eminem')">Good morning</h4>
                     </div>
 
                     <div class="container-fluid mt-3">
@@ -339,8 +340,8 @@
 
                         <section class="hero-section-borderless mx-0">
                             <div class="recentPlayed-Section">
-                                <h4 class="mt-2 mr-auto">Recently played</h4>
-                                <a class="seeAll1">SEE ALL</a>
+                                <h4 class="mt-2 mr-auto" onClick="getArtist('metallica')">Recently played</h4>
+                                <a class="seeAll1" onClick="getArtist('behemoth')">SEE ALL</a>
                             </div>
 
                             <div class="row" id="books-wrapper" style="margin-top: 100px">
@@ -456,61 +457,55 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF" crossorigin="anonymous"></script>
     -->
         <script>
-            let albums = []
-            let pagecontent = document.querySelector("#books-wrapper");
-
-            function searchdeezer(query) {
+            const getArtist = (query) => {
                 fetch("https://deezerdevs-deezer.p.rapidapi.com/search?q=" + query, {
                         "method": "GET",
                         "headers": {
                             "x-rapidapi-host": "deezerdevs-deezer.p.rapidapi.com",
                             "x-rapidapi-key": "45ea72d0cbmsh5a68a7ddaa76fefp17c953jsn0a280e030350"
+                        },
+
+
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+
+
+                        let artist = data.data
+
+                        displayArtist(artist)
+                        console.log(artist)
+
+                        function displayArtist(artist) {
+                            const row = document.querySelector('#books-wrapper')
+                            row.innerHTML = ""
+
+                            artist.forEach((obj) => {
+                                row.innerHTML +=
+                                    `<div class="col-sm-6 col-md-4 col-lg-3 mb-3" >
+                                        <div class="card bg-dark border-dark"style="width:150px">
+                                           
+                                            <img src="${obj.album.cover}" class="p-2" alt="..." id="notRounded"  />
+                                            <div class="card-body">
+
+                                                <small class="card-text">${obj.album.title}</strong><br>
+
+                                                    <small style="color:white">${obj.album.id}</small>
+                                                </small>
+
+                                            </div>
+                                        </div>
+                                    </div>  `
+                            })
+
                         }
                     })
-                    .then((response) => response.json())
-                    .then((data) => {
-                        albums = data;
-                        console.log(albums.data);
-                        sing(data);
-                    })
 
-                .catch(err => console.log(err.message))
+                .catch(err => {
+                    console.error(err);
+                });
+
             }
-
-
-            window.onload = () => {
-                searchdeezer("eminem")
-                searchdeezer("metallica")
-                searchdeezer("behemoth")
-            }
-            let song = document.getElementById("song")
-            song.addEventListener('click', function() {
-                confirm("alert cliked")
-
-
-
-                function sing(data = albums) {
-                    pagecontent.innerHTML = "";
-
-                    data.forEach((album) => {
-                        pagecontent.innerHTML += `<div class="col-sm-6 col-md-2 col-lg-2 mb-3" >
-                <div class="card bg-dark border-dark"style="width:150px">
-                   
-                    <img src="${album.cover}" class="p-2" alt="..." id="notRounded"  />
-                    <div class="card-body">
-
-                        <p class="card-text">${album.id}</strong><br>
-
-                            <small style="color:white">"${album.title}"</small>
-                        </p>
-
-                    </div>
-                </div>
-            </div>  `
-                    })
-
-                }
-            })
         </script>
 </body>
 
